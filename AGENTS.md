@@ -5,6 +5,7 @@
 - No UIKit, app models, authentication, default account, network client or third-party SDK in the first batch.
 - Preserve attribution and document source provenance and behavior changes.
 - Caller supplies limits, image policy and file ownership; throw real failures.
-- Keep source files intact. File APIs only read local files and never delete originals.
+- Keep source files intact. Image APIs are read-only; Files may write and clean only their own newly-created workspace, never arbitrary source paths or the parent directory.
+- Concurrency registration/callback/cancel handlers must run outside locks. Cover cancellation before and during registration, and repeated callbacks.
 - Test individual imports, umbrella APIs, image format/orientation/alpha/metadata/multiframe/size failures.
 - Record actual runtime and compiler versions separately from declared compatibility.
