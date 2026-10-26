@@ -1,6 +1,6 @@
 import Dispatch
 import Foundation
-import IntelliKitConcurrency
+@testable import IntelliKitConcurrency
 import Testing
 
 private enum Failure: Error { case expected }
@@ -30,8 +30,8 @@ private struct Signal: Sendable {
   func wait() async { for await _ in stream { return } }
 }
 
-@Test func lockedStateSurvivesConcurrentUpdatesAndThrows() throws {
-  let value = Locked(0)
+@Test(arguments: [false, true]) func lockedStateSurvivesConcurrentUpdatesAndThrows(useLegacyLock: Bool) throws {
+  let value = Locked(0, useLegacyLock: useLegacyLock)
   DispatchQueue.concurrentPerform(iterations: 1000) { _ in value.withLock { $0 += 1 } }
   #expect(value.withLock { $0 } == 1000)
   #expect(throws: Failure.self) {

@@ -20,3 +20,12 @@ public typealias AsyncCallback = IntelliKitConcurrency.AsyncCallback
 public typealias AsyncRemoveDuplicatesSequence<Base: AsyncSequence, Key: Equatable> = IntelliKitConcurrency.AsyncRemoveDuplicatesSequence<Base, Key>
 public typealias TemporaryWorkspace = IntelliKitFiles.TemporaryWorkspace
 public typealias WorkspaceError = IntelliKitFiles.WorkspaceError
+
+import IntelliKitNetworking
+import IntelliKitDiskCache
+public typealias BoundedHTTPDownload = IntelliKitNetworking.BoundedHTTPDownload
+public typealias HTTPDownloadPolicy = IntelliKitNetworking.HTTPDownloadPolicy
+public typealias HTTPDownloadError = IntelliKitNetworking.HTTPDownloadError
+public typealias DiskCache = IntelliKitDiskCache.DiskCache
+public typealias DiskCacheEntry = IntelliKitDiskCache.DiskCacheEntry
+public typealias DiskCacheError = IntelliKitDiskCache.DiskCacheError

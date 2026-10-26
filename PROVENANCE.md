@@ -24,3 +24,18 @@
 第二批没有修改第一批图片行为，没有迁移任何 App。Concurrency 与 Files 各自独立 product/target，均无第三方或其他能力模块依赖；IntelliKit 聚合入口同步导出公开类型。
 
 App 中已有同名 AsyncSequence 扩展未来迁移时应移除或转发，避免定义冲突。用户草稿、录音原件、缓存账号域、任意目录删除和框架特有取消语义继续留在消费方。
+
+## 第三批：Networking / DiskCache / Mutex — 2026-10-26
+
+| 能力 | 本地来源 | 共享化变化 |
+|---|---|---|
+| BoundedHTTPDownload | CapMemo/iOS/CapMemo/Services/BoundedHTTPDownload.swift；同仓库 Tests/BoundedHTTPDownloadTests.swift 的传输夹具 | 提取独立 Networking target；保留 header/chunk 限额和取消状态机，新增 throwing 配置、结构化状态码错误、GET/HTTPS/重定向策略、完整资源超时与 session 隔离；不搬 Web 导入、封面或 memo 行为 |
+| DiskCache | EveryDayJapanese-iOS/Core/Sources/Cache/SWRCacheStore.swift、SWRCacheTypes.swift；EveryDayJapanese/AudioManager/CacheFileManager.swift | 从 actor/Data envelope/容量淘汰需求重新组织；namespace/key 哈希、显式 TTL/schema、独占目录锁和归属检查、原子写入及可观察错误；不搬 Pluto 当前账号、SWR 网络调度、音频/视频目录或 shared 全局实例 |
+| Locked Mutex 分支 | 既有 IntelliKitConcurrency.Locked；本机 Synchronization.swiftinterface 与 Apple Mutex 文档 | 本轮用户要求启用版本判断：iOS18/macOS15 及以上用 Mutex，旧系统 NSLock；保留 Value:Sendable、泛型返回值和 rethrows 语义；不采用需要新版编译器的类型级 nonisolated |
+
+来源快照仍为 CapMemo ca45459、EveryDayJapanese-iOS 302c978；本轮只读这些来源，未迁移四个 App。Networking 和 DiskCache 均仅依赖系统框架，互相独立，也不依赖其他 IntelliKit 能力。
+
+容量淘汰沿用最早写入优先，不声称 LRU。缓存账号隔离、刷新与重试、文件保护、清理时机继续属于接入方。缓存不再吞掉所有 I/O 错误；需要 best-effort 行为的 App 可明确决定如何处理错误。
+
+Mutex 官方参考：https://developer.apple.com/documentation/synchronization/mutex
+本机 SDK 声明：`@available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, visionOS 2.0, *)`。
