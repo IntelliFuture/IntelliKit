@@ -1,0 +1,14 @@
+import IntelliKitFoundation
+import IntelliKitImageProcessing
+
+public typealias Apply = IntelliKitFoundation.Apply
+public typealias ImageProcessor = IntelliKitImageProcessing.ImageProcessor
+public typealias ImageInfo = IntelliKitImageProcessing.ImageInfo
+public typealias ImagePixelSize = IntelliKitImageProcessing.ImagePixelSize
+public typealias ImageProcessingOptions = IntelliKitImageProcessing.ImageProcessingOptions
+public typealias ImageProcessingError = IntelliKitImageProcessing.ImageProcessingError
+public typealias ImageOutputFormat = IntelliKitImageProcessing.ImageOutputFormat
+public typealias ImageMetadataPolicy = IntelliKitImageProcessing.ImageMetadataPolicy
+public typealias MultipleFramePolicy = IntelliKitImageProcessing.MultipleFramePolicy
+public typealias RGBColor = IntelliKitImageProcessing.RGBColor
+public typealias ProcessedImage = IntelliKitImageProcessing.ProcessedImage
