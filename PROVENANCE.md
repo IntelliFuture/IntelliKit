@@ -39,3 +39,14 @@ App 中已有同名 AsyncSequence 扩展未来迁移时应移除或转发，避�
 
 Mutex 官方参考：https://developer.apple.com/documentation/synchronization/mutex
 本机 SDK 声明：`@available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, visionOS 2.0, *)`。
+
+## 第四批：MoreApps（同一开发者的更多 App）— 2026-10-30
+
+| 能力 | 本地来源（相对对应仓库） | 共享化变化 |
+|---|---|---|
+| MoreApp 模型 | EveryDayJapanese-iOS/Core/Sources/Model/MoreApps/MoreAppInfo.swift | 更名 `MoreAppInfo` → `MoreApp`，字段与公开契约不变；移出 App 层 |
+| 语言映射 | EveryDayJapanese-iOS/Core/Sources/Repository/MoreAppsRepository.swift（`lookupLanguageCode`） | 提取为独立 `MoreAppsLanguage.lookupCode(forAppLanguage:)`，保留 en/zh-Hans/zh-Hant/ko/vi/ja 映射与非法输入判断 |
+| 查询仓库 | 同上 `MoreAppsRepository` | 传输从 Alamofire 改为 IntelliKitNetworking 的 `BoundedHTTPDownload`；保留 itunes lookup URL、software 过滤、bundle 去重/排除、http→https 图标升级、HTTP 400 去 `lang` 重试与 `failureKind` 分类；`developerID`/排除项/语言全部改由调用方传入，不再内置 `MoreAppsConfiguration` |
+| 列表视图 | EveryDayJapanese-iOS/EveryDayJapanese/Controller/Settings/MoreApps/MoreAppsView.swift、MoreAppsViewModel.swift | 重实现为 `MoreAppsListModel`（`ObservableObject`，兼容 iOS 16，非 `@Observable`）+ `MoreAppsListView`；图标用系统 `AsyncImage` 替换 Kingfisher，文案经 `MoreAppsListStrings` 注入，分析日志改为可选回调；SwiftUI 代码以 `#if canImport(SwiftUI)` 包裹 |
+
+参考快照：EveryDayJapanese-iOS 302c978（只读来源，未修改或迁移该 App）。MoreApps 仅依赖系统框架与 IntelliKitNetworking，不引入 Alamofire、Kingfisher 或任何业务模型/账号；不内置具体开发者 ID、bundle 排除列表或 `EDJAnalytics`，可随 IntelliKit 一并开源。`MoreAppsConfiguration`（开发者 ID、排除 bundle）、Firebase 打点和 App 主题样式继续留在各自 App。

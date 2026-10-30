@@ -11,6 +11,7 @@ let package = Package(
     .library(name: "IntelliKitFiles", targets: ["IntelliKitFiles"]),
     .library(name: "IntelliKitNetworking", targets: ["IntelliKitNetworking"]),
     .library(name: "IntelliKitDiskCache", targets: ["IntelliKitDiskCache"]),
+    .library(name: "IntelliKitMoreApps", targets: ["IntelliKitMoreApps"]),
     .library(name: "IntelliKit", targets: ["IntelliKit"]),
   ],
   targets: [
@@ -20,11 +21,13 @@ let package = Package(
     .target(name: "IntelliKitFiles", path: "Sources/Files"),
     .target(name: "IntelliKitNetworking", path: "Sources/Networking"),
     .target(name: "IntelliKitDiskCache", path: "Sources/DiskCache"),
-    .target(name: "IntelliKit", dependencies: ["IntelliKitFoundation", "IntelliKitImageProcessing", "IntelliKitConcurrency", "IntelliKitFiles", "IntelliKitNetworking", "IntelliKitDiskCache"]),
+    .target(name: "IntelliKitMoreApps", dependencies: ["IntelliKitNetworking"], path: "Sources/MoreApps"),
+    .target(name: "IntelliKit", dependencies: ["IntelliKitFoundation", "IntelliKitImageProcessing", "IntelliKitConcurrency", "IntelliKitFiles", "IntelliKitNetworking", "IntelliKitDiskCache", "IntelliKitMoreApps"]),
     .testTarget(name: "IntelliKitTests", dependencies: ["IntelliKit", "IntelliKitFoundation", "IntelliKitImageProcessing"]),
     .testTarget(name: "ConcurrencyTests", dependencies: ["IntelliKitConcurrency"]),
     .testTarget(name: "NetworkingTests", dependencies: ["IntelliKitNetworking"]),
     .testTarget(name: "DiskCacheTests", dependencies: ["IntelliKitDiskCache"]),
     .testTarget(name: "FilesTests", dependencies: ["IntelliKitFiles"]),
+    .testTarget(name: "MoreAppsTests", dependencies: ["IntelliKitMoreApps"]),
   ]
 )

@@ -11,3 +11,4 @@
 - Concurrency registration/callback/cancel handlers must run outside locks. Cover cancellation before and during registration, and repeated callbacks.
 - Test individual imports, umbrella APIs, image format/orientation/alpha/metadata/multiframe/size failures.
 - Record actual runtime and compiler versions separately from declared compatibility.
+- MoreApps is data-first: models, iTunes lookup repository and language mapping use only Foundation + IntelliKitNetworking (no Alamofire/Kingfisher, no developer id, bundle list or analytics baked in; the caller supplies all of it). Its optional SwiftUI view/model stay inside `#if canImport(SwiftUI)`, use `ObservableObject` (not `@Observable`) to hold the iOS 16 baseline, load icons with `AsyncImage`, and take user-facing copy via injected strings.

@@ -29,3 +29,11 @@ public typealias HTTPDownloadError = IntelliKitNetworking.HTTPDownloadError
 public typealias DiskCache = IntelliKitDiskCache.DiskCache
 public typealias DiskCacheEntry = IntelliKitDiskCache.DiskCacheEntry
 public typealias DiskCacheError = IntelliKitDiskCache.DiskCacheError
+
+import IntelliKitMoreApps
+public typealias MoreApp = IntelliKitMoreApps.MoreApp
+public typealias MoreAppsLookup = IntelliKitMoreApps.MoreAppsLookup
+public typealias MoreAppsLanguage = IntelliKitMoreApps.MoreAppsLanguage
+public typealias MoreAppsError = IntelliKitMoreApps.MoreAppsError
+public typealias MoreAppsHTTPStatusError = IntelliKitMoreApps.MoreAppsHTTPStatusError
+public typealias MoreAppsFailureKind = IntelliKitMoreApps.MoreAppsFailureKind
