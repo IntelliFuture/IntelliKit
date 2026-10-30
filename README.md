@@ -10,6 +10,7 @@ IntelliFuture 的独立工具包。Swift tools 6.0，iOS 16 / macOS 13，无第�
 | Sources/Files | IntelliKitFiles | 自有临时工作区、完整文件发布、复制与生命周期清理 |
 | Sources/Networking | IntelliKitNetworking | 流式受限 HTTP GET、响应校验、重定向和取消 |
 | Sources/DiskCache | IntelliKitDiskCache | 独立命名空间的 Data 磁盘缓存、TTL、schema 与容量淘汰 |
+| Sources/MoreApps | IntelliKitMoreApps | 按开发者 ID 查询 App Store 其他应用（"更多 App"），含语言映射、过滤去重与可选 SwiftUI 列表 |
 | Sources/IntelliKit | IntelliKit | 显式类型别名聚合入口 |
 
 每个能力独立 target，六个能力之间没有强制依赖；Networking / DiskCache 互不依赖，也不依赖 Concurrency、Files、图片模块或第三方包。
@@ -179,6 +180,42 @@ await cache.close() // 释放独占占用，持久缓存仍保留
 - 损坏条目和真实 I/O 错误会抛出，损坏数据保留到显式 remove/removeAll；读取按上限分块，不无界加载外部变大的条目。
 - 只管理带所有权标记的专用子目录及固定命名条目，清理保留父目录和无关文件。拒绝条目符号链接/硬链接、根目录或 lock 被替换；不递归清空任意目录。这些检查不是对恶意进程并发篡改文件系统的系统沙箱。
 - 父目录、文件保护、备份/隐私策略由调用方选择。系统或外部删除整个目录/owner 标记时会报告错误；接入方须关闭旧实例并重新建立可用缓存。模块不处理账号退出清理、网络刷新、数据库迁移或跨设备同步。
+
+## 更多 App（同一开发者）
+
+```swift
+import IntelliKitMoreApps // 或 import IntelliKit
+import SwiftUI
+
+// 1) 纯数据层：按开发者 ID 查询 App Store 其他应用
+let lookup = MoreAppsLookup() // 默认走 IntelliKitNetworking 的受限 HTTPS GET
+let apps = try await lookup.fetchApps(
+  developerID: 1841278819,                 // 由调用方提供，模块不内置任何 App
+  appLanguageCode: "zh-Hans",              // 映射为 itunes lookup 的 lang=zh_cn
+  excludingBundleIdentifiers: ["app.example.debug"]
+)
+
+// 2) 可选现成视图：每行点开 App Store，图标用 AsyncImage，无第三方依赖
+struct MoreAppsScreen: View {
+  var body: some View {
+    MoreAppsListView(
+      model: MoreAppsListModel(
+        developerID: 1841278819,
+        appLanguageCode: { Locale.preferredLanguages.first ?? "en" },
+        excludedBundleIdentifiers: ["app.example.debug"]
+      ),
+      strings: MoreAppsListStrings(loading: "正在加载", empty: "暂无更多 App", retry: "重试")
+    )
+    .navigationTitle("更多 App")
+  }
+}
+```
+
+- developerID、排除的 bundle id、语言代码全部由调用方提供；模块不内置任何开发者或 App，可直接开源。`includeMainBundleInExclusions` 默认把宿主 App 自己的 bundle id 排除，列表不会列出自身。
+- 数据源固定为 `https://itunes.apple.com/lookup?id=<dev>&entity=software`；只接受 software 条目，去重 bundle id，强制 https，http 图标升级为 https，缺字段的条目丢弃。
+- 语言仅映射实际上架市场（en/zh-Hans/zh-Hant/ko/vi/ja），未支持的语言抛 `invalidLanguageCode`，由调用方决定是否退回 storefront 默认；某语言返回 HTTP 400 时自动去掉 `lang` 重试一次。
+- 传输默认用 `BoundedHTTPDownload`（无 cookie/凭据/缓存、限大小、限重定向）；也可注入自定义 `DataLoader`，用 `MoreAppsHTTPStatusError` 表达 HTTP 状态。`MoreAppsLookup.failureKind(for:)` 给出稳定的、可安全打点的失败分类。
+- 视图层用 `ObservableObject` 以兼容 iOS 16 基线，SwiftUI 代码包裹在 `#if canImport(SwiftUI)` 内；图标用系统 `AsyncImage`，不引入 Kingfisher/SDWebImage。想自定义样式的 App 可只用数据层。
 
 ## 验证与来源
 
